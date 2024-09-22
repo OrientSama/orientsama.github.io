@@ -27,8 +27,8 @@
 		data-flex-grow=&#34;369&#34;
 		data-flex-basis=&#34;886px&#34;
 	
-&gt;
-效果如上图所示，需要修改下面几个文件。这些文件（除了hugo.yaml之外）都是在&lt;code&gt;themes\your theme folder&lt;/code&gt;下面找到的。但是我为了避免之后更新主题方便，我都在外面建了相应的文件夹/文件。据我所知，hugo的文件是如果主文件夹下有同名的文件，会优先使用主文件夹下的文件，如果没有，才会使用&lt;code&gt;themes&lt;/code&gt;文件夹里面的文件。&lt;/p&gt;
+&gt;&lt;/p&gt;
+&lt;p&gt;效果如上图所示，需要修改下面几个文件。这些文件（除了hugo.yaml之外）都是在&lt;code&gt;themes\your theme folder&lt;/code&gt;下面找到的。但是我为了避免之后更新主题方便，我都在外面建了相应的文件夹/文件。据我所知，hugo的文件是如果主文件夹下有同名的文件，会优先使用主文件夹下的文件，如果没有，才会使用&lt;code&gt;themes&lt;/code&gt;文件夹里面的文件。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
