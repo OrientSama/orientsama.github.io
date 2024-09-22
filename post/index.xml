@@ -120,8 +120,8 @@
 &lt;/h2&gt;&lt;p&gt;评论系统使用的是giscus, 优点：利用github的discussion功能，不需要额外的搞其他东西；缺点：评论时需要登陆github。&lt;/p&gt;
 &lt;p&gt;我所使用的stack主题支持许多系统，只需要简单的配置一下&lt;code&gt;hugo.yaml&lt;/code&gt;即可。&lt;/p&gt;
 &lt;h3 id=&#34;第一步-建一个公开仓库&#34;&gt;第一步 建一个公开仓库
-&lt;/h3&gt;&lt;p&gt;名字无所谓，需要把discussion功能打开，如下图所示。
-&lt;img src=&#34;https://orientsama.github.io/p/comment/discussion.png&#34;
+&lt;/h3&gt;&lt;p&gt;名字无所谓，需要把discussion功能打开，如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://orientsama.github.io/p/comment/discussion.png&#34;
 	width=&#34;1173&#34;
 	height=&#34;1254&#34;
 	srcset=&#34;https://orientsama.github.io/p/comment/discussion_hu10317614531666979792.png 480w, https://orientsama.github.io/p/comment/discussion_hu10537343257996725085.png 1024w&#34;
@@ -143,8 +143,8 @@
 &lt;h3 id=&#34;第三步-获取配置信息&#34;&gt;第三步 获取配置信息
 &lt;/h3&gt;&lt;p&gt;使用链接&lt;a class=&#34;link&#34; href=&#34;https://giscus.app/zh-CN&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;giscus zh-CN&lt;/a&gt;,点进去，按照配置里面的选项选择
-仓库填写刚才&lt;strong&gt;创建并安装giscus&lt;/strong&gt;的仓库，之后全选第一个，会得到一个&lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt;
-&lt;img src=&#34;https://orientsama.github.io/p/comment/image.png&#34;
+仓库填写刚才&lt;strong&gt;创建并安装giscus&lt;/strong&gt;的仓库，之后全选第一个，会得到一个&lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://orientsama.github.io/p/comment/image.png&#34;
 	width=&#34;1205&#34;
 	height=&#34;491&#34;
 	srcset=&#34;https://orientsama.github.io/p/comment/image_hu306085265211309508.png 480w, https://orientsama.github.io/p/comment/image_hu12711543992677000793.png 1024w&#34;
