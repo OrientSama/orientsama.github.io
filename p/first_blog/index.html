@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://orientsama.github.io/p/first_blog/'>
 
-<link rel="stylesheet" href="/scss/style.min.a2ddbe6371f6ae911b32ea59a0f8b301472a3bcf87d819bcf7751b6424a8abbc.css"><meta property='og:title' content="第一篇博客">
+<link rel="stylesheet" href="/scss/style.min.dbd936be5cbc70b56db5b189747adf82c065f9f0c2f7afcd6f45b69b54d737e0.css"><meta property='og:title' content="第一篇博客">
 <meta property='og:description' content="记录一下，第一篇博客。">
 <meta property='og:url' content='https://orientsama.github.io/p/first_blog/'>
 <meta property='og:site_name' content='OrientSama'>
@@ -463,6 +463,30 @@
             
                 
 <article class="has-image">
+    <a href="/p/comment/">
+        
+        
+            <div class="article-image">
+                <img src="/p/comment/giscus.6cc2556fe6eb9359203592a969bdb783_hu18079424917708564965.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 访问量统计与评论系统"
+                        data-key="comment" 
+                        data-hash="md5-bMJVb&#43;brk1kgNZKpab23gw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">访问量统计与评论系统</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
     <a href="/p/particles/">
         
         
@@ -492,6 +516,56 @@
      
     
         
+    <script
+    src="https://giscus.app/client.js"
+    data-repo="OrientSama/Giscus"
+    data-repo-id="R_kgDOM1SydA"
+    data-category="Announcements"
+    data-category-id="DIC_kwDOM1SydM4Ciro1"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="en"
+    crossorigin="anonymous"
+    async
+></script>
+<script>
+    function setGiscusTheme(theme) {
+        let giscus = document.querySelector("iframe.giscus-frame");
+        if (giscus) {
+            giscus.contentWindow.postMessage(
+                {
+                    giscus: {
+                        setConfig: {
+                            theme: theme,
+                        },
+                    },
+                },
+                "https://giscus.app"
+            );
+        }
+    }
+
+    (function () {
+        addEventListener("message", (e) => {
+            if (event.origin !== "https://giscus.app") return;
+            handler();
+        });
+        window.addEventListener("onColorSchemeChange", handler);
+
+        function handler() {
+            if (document.documentElement.dataset.scheme === "light") {
+                setGiscusTheme('light');
+            } else {
+                setGiscusTheme('dark');
+            }
+        }
+    })();
+</script>
+
     
 
     <footer class="site-footer">
