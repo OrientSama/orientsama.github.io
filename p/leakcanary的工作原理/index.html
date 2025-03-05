@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="多目标跟踪的评价指标，MOT Metrics">
-<title>多目标跟踪评价指标</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="LeakCanary是如何做到仅仅使用一句话做到内存泄漏检测的？ 在leakcanary的faq.md中有一段解释\nHow does LeakCanary get installed by only adding a dependency? On Android, content providers are created after the Application instance is created but before Application.onCreate() is called. The leakcanary-object-watcher-android artifact has a non exported ContentProvider defined in its AndroidManifest.xml file. When that ContentProvider is installed, it adds activity and fragment lifecycle listeners to the application.\n">
+<title>LeakCanary的工作原理</title>
 
-<link rel='canonical' href='https://orientsama.github.io/p/mot_metrics/'>
+<link rel='canonical' href='https://orientsama.github.io/p/leakcanary%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/'>
 
-<link rel="stylesheet" href="/scss/style.min.c2f25d8d1b3eb49fa5821d597f149291e28177ece011680fe68c0fc03bd45f1b.css"><meta property='og:title' content="多目标跟踪评价指标">
-<meta property='og:description' content="多目标跟踪的评价指标，MOT Metrics">
-<meta property='og:url' content='https://orientsama.github.io/p/mot_metrics/'>
+<link rel="stylesheet" href="/scss/style.min.c2f25d8d1b3eb49fa5821d597f149291e28177ece011680fe68c0fc03bd45f1b.css"><meta property='og:title' content="LeakCanary的工作原理">
+<meta property='og:description' content="LeakCanary是如何做到仅仅使用一句话做到内存泄漏检测的？ 在leakcanary的faq.md中有一段解释\nHow does LeakCanary get installed by only adding a dependency? On Android, content providers are created after the Application instance is created but before Application.onCreate() is called. The leakcanary-object-watcher-android artifact has a non exported ContentProvider defined in its AndroidManifest.xml file. When that ContentProvider is installed, it adds activity and fragment lifecycle listeners to the application.\n">
+<meta property='og:url' content='https://orientsama.github.io/p/leakcanary%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/'>
 <meta property='og:site_name' content='OrientSama'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Metrics' /><meta property='article:published_time' content='2024-12-21T14:43:06&#43;08:00'/><meta property='article:modified_time' content='2024-12-21T14:43:06&#43;08:00'/><meta property='og:image' content='https://orientsama.github.io/p/mot_metrics/image-1.png' />
-<meta name="twitter:title" content="多目标跟踪评价指标">
-<meta name="twitter:description" content="多目标跟踪的评价指标，MOT Metrics"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://orientsama.github.io/p/mot_metrics/image-1.png' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-03-05T21:39:12&#43;08:00'/><meta property='article:modified_time' content='2025-03-05T21:39:12&#43;08:00'/>
+<meta name="twitter:title" content="LeakCanary的工作原理">
+<meta name="twitter:description" content="LeakCanary是如何做到仅仅使用一句话做到内存泄漏检测的？ 在leakcanary的faq.md中有一段解释\nHow does LeakCanary get installed by only adding a dependency? On Android, content providers are created after the Application instance is created but before Application.onCreate() is called. The leakcanary-object-watcher-android artifact has a non exported ContentProvider defined in its AndroidManifest.xml file. When that ContentProvider is installed, it adds activity and fragment lifecycle listeners to the application.\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
   <meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="/css/syntax.css">
@@ -255,21 +254,13 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#基本概念">基本概念</a>
+    <li><a href="#leakcanary是如何做到仅仅使用一句话做到内存泄漏检测的">LeakCanary是如何做到仅仅使用一句话做到内存泄漏检测的？</a></li>
+    <li><a href="#how-does-leakcanary-get-installed-by-only-adding-a-dependency">How does LeakCanary get installed by only adding a dependency?</a>
       <ol>
-        <li><a href="#轨迹track">轨迹Track</a></li>
-        <li><a href="#目标框det">目标框Det</a></li>
-        <li><a href="#匹配match">匹配Match:</a></li>
+        <li><a href="#那么refwatcher是怎么做到的检测内存泄漏呢">那么refWatcher是怎么做到的检测内存泄漏呢？</a></li>
       </ol>
     </li>
-    <li><a href="#评价指标">评价指标</a>
-      <ol>
-        <li><a href="#mota">MOTA</a></li>
-        <li><a href="#idf1">IDF1</a></li>
-        <li><a href="#motp">MOTP</a></li>
-        <li><a href="#hota">HOTA</a></li>
-      </ol>
-    </li>
+    <li><a href="#common-causes-for-memory-leaks">Common causes for memory leaks</a></li>
   </ol>
 </nav>
         </div>
@@ -281,41 +272,17 @@
 
 
             <main class="main full-width">
-    <article class="has-image main-article">
+    <article class="main-article">
     <header class="article-header">
-        <div class="article-image">
-            <a href="/p/mot_metrics/">
-                <img src="/p/mot_metrics/image-1_hu_f68eaa77e19f79a1.png"
-                        srcset="/p/mot_metrics/image-1_hu_f68eaa77e19f79a1.png 800w, /p/mot_metrics/image-1_hu_28603614a0014a59.png 1600w"
-                        width="800" 
-                        height="344" 
-                        loading="lazy"
-                        alt="Featured image of post 多目标跟踪评价指标" />
-                
-            </a>
-        </div>
-    
 
     <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/deep-learning/" >
-                Deep Learning
-            </a>
-        
-    </header>
     
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/mot_metrics/">多目标跟踪评价指标</a>
+            <a href="/p/leakcanary%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">LeakCanary的工作原理</a>
         </h2>
     
-        
-        <h3 class="article-subtitle">
-            多目标跟踪的评价指标，MOT Metrics
-        </h3>
         
     </div>
 
@@ -335,7 +302,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Dec 21, 2024</time>
+                <time class="article-time--published">Mar 05, 2025</time>
             </div>
         
 
@@ -350,7 +317,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 3 分钟
+                    阅读时长: 2 分钟
                 </time>
             </div>
         
@@ -365,69 +332,104 @@
     <section class="article-content">
     
     
-    <h2 id="基本概念">基本概念
-</h2><p>多目标跟踪任务主要用于视频场景，主要是将视频中的物体例如行人、车辆进行编号，并且持续跟踪。</p>
-<h3 id="轨迹track">轨迹Track
-</h3><p>不同帧里同一个目标的目标框就构成了这个人的轨迹，每个目标的轨迹都有一个独一无二的轨迹编号（trackId).</p>
-<h3 id="目标框det">目标框Det
-</h3><p>这个很好理解，视频是由许多图片组成的一个序列，我可以使用目标检测模型对每帧的图片进行推理，即可得到每帧画面的预测狂predDet,与之对应的也有相应的GroundTruth，即gtDet.</p>
-<h3 id="匹配match">匹配Match:
-</h3><p>在指标评估阶段,匹配分为两种：目标框的匹配和轨迹的匹配。</p>
-<p><strong>目标框的匹配</strong>只针对单帧的目标检测而言。对于每一帧的predDet,计算IOU或者其他的度量算法，与gtDet进行一对一的匹配。这些指标与目标检测所用的一致。</p>
-<p><strong>轨迹的匹配</strong>是针对预测轨迹和真实轨迹的。一条predTrack通过评估算法可能匹配到一条trackId不同的gtTrack.</p>
-<h2 id="评价指标">评价指标
-</h2><h3 id="mota">MOTA
-</h3><p>$MOTA = 1 - \frac{\sum_t(FN_t + FP_t + IDSW_t)}{\sum_t GT_t}$
-GT为一帧上的所有gtBox的数量，FN为假负，FP为假正，IDSW指目标框trackId跳变的情况，一般发生在遮挡、重合时。（IDSW针对TP来说）</p>
-<p>这个评价指标比较依赖目标检测的性能，对于IDSW只关注跳变的次数，不关注id的准确性。例如：</p>
-<p>truth ：1-1-1-1-1-1-1-1-1-1</p>
-<p>track1：1-1-2-2-3-3-4-4-5-5</p>
-<p>track2：1-1-2-2-1-1-2-2-1-1</p>
-<p>其MOTA指标计算结果都是0.6，但2的表现更好，为了解决这个问题，需要IDF1指标。</p>
-<h3 id="idf1">IDF1
-</h3><p>$IDF_1 = \frac{2 \times IDTP}{2 \times IDTP + IDFP + IDFN}$</p>
-<h3 id="motp">MOTP
-</h3><p>MOTA主要评估检测能力，但没有评估定位能力。</p>
-<p>$MOTP = \frac{\sum_{t,i} d_{t,i}}{\sum_t c_t}$，
-$c_t$表示t帧上的总匹配数量，$d_{t,i}$表示t帧上第i个目标框的定位精度</p>
-<h3 id="hota">HOTA
-</h3><p>在目标检测评估定位能力时，会使用IOU的指标：</p>
-<p>$DetA = IOU = \frac{TP}{TP + FN + FP}$,即交并比，与之类似
-HOTA也借用这个思想，来评价两条轨迹的“关联IOU”:</p>
-<p>$IOU_{Association} = \frac{TPA}{TPA + FNA + FPA}$</p>
-<p><img src="/p/mot_metrics/image.png"
-	width="1040"
-	height="518"
-	srcset="/p/mot_metrics/image_hu_391689a9a1e22e20.png 480w, /p/mot_metrics/image_hu_715af1c30b4d8050.png 1024w"
+    <h2 id="leakcanary是如何做到仅仅使用一句话做到内存泄漏检测的">LeakCanary是如何做到仅仅使用一句话做到内存泄漏检测的？
+</h2><p>在leakcanary的faq.md中有一段解释</p>
+<blockquote>
+<h2 id="how-does-leakcanary-get-installed-by-only-adding-a-dependency">How does LeakCanary get installed by only adding a dependency?
+</h2><p>On Android, content providers are created after the Application instance is created but before Application.onCreate() is called. The <code>leakcanary-object-watcher-android</code> artifact has a non exported ContentProvider defined in its <code>AndroidManifest.xml</code> file. When that ContentProvider is installed, it adds activity and fragment lifecycle listeners to the application.</p></blockquote>
+<p>翻译过来就是：</p>
+<blockquote>
+<p>在安卓中，ContentProvider被创建的时机处在Application被创建之后，但是在Application.onCreate()方法之前</p></blockquote>
+<p>所以，LeakCanary通过Gradle构建时会合并<code>AndroidManifest.xml</code>的机制，提供了一个ContentProvider在我们的软件里，当它被安装时，它便添加了相关refWatcher.</p>
+<h3 id="那么refwatcher是怎么做到的检测内存泄漏呢">那么refWatcher是怎么做到的检测内存泄漏呢？
+</h3><p>这又扯到我不是很熟悉的领域了</p>
+<blockquote>
+<p>似乎是Java、Kotlin 语言有四种引用类型：强引用, 弱引用，软引用，虚引用，而软引用和弱引用所引用的对象被释放掉之后，就会进入关联的引用队列的尾部。那么我们就能通过这种方式来看这些弱引用的对象是否还存活</p></blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">private</span> <span class="k">fun</span> <span class="nf">wefQueueTest</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">weakefQueue</span> <span class="p">=</span> <span class="n">ReferenceQueue</span><span class="p">&lt;</span><span class="n">Any</span><span class="p">?&gt;()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="py">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">?</span> <span class="p">=</span> <span class="n">Object</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">weakReference</span> <span class="p">=</span> <span class="n">WeakReference</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">weakefQueue</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="p">(</span><span class="s2">&#34;weakReference = </span><span class="si">$weakReference</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">obj</span> <span class="p">=</span> <span class="k">null</span> <span class="c1">// 弱引用的对象释放掉
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nc">Runtime</span><span class="p">.</span><span class="n">getRuntime</span><span class="p">().</span><span class="n">gc</span><span class="p">()</span> <span class="c1">// 强制垃圾回收
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="m">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="py">ref</span><span class="p">:</span> <span class="n">WeakReference</span><span class="p">&lt;</span><span class="n">Any</span><span class="p">?&gt;?</span>
+</span></span><span class="line"><span class="cl">    <span class="k">do</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ref</span> <span class="p">=</span> <span class="n">weakefQueue</span><span class="p">.</span><span class="n">poll</span><span class="p">()</span> <span class="k">as</span><span class="p">?</span> <span class="n">WeakReference</span><span class="p">&lt;</span><span class="n">Any</span><span class="p">?&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">obj1</span> <span class="p">=</span> <span class="n">ref</span><span class="o">?.</span><span class="k">get</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;obj1 = </span><span class="si">$obj1</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;</span><span class="si">$ref</span><span class="s2"> in queue&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">ref</span> <span class="o">!=</span> <span class="k">null</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/leakcanary%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/image.png"
+	width="683"
+	height="270"
+	srcset="/p/leakcanary%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/image_hu_152102f1f2bc9abc.png 480w, /p/leakcanary%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/image_hu_ce64edd62b30de2c.png 1024w"
 	loading="lazy"
 	
-		alt="图解"
+		alt="运行结果"
 	
 	
 		class="gallery-image" 
-		data-flex-grow="200"
-		data-flex-basis="481px"
+		data-flex-grow="252"
+		data-flex-basis="607px"
 	
->
-对于一个匹配的TP对，红框，我们使用这个来计算其关联IOU,绿框为匹配的轨迹，黄框和棕框为不匹配的轨迹。</p>
-<p>通过计算所有匹配的TP对，可以得到一个整体准确度：</p>
-<p>$AssA = \frac{1}{TP} \sum_{c \in TP} IOU_{Association}(c)$</p>
-<p>$HOTA_\alpha = \sqrt{DetA_\alpha \cdot AssA_\alpha}$</p>
-<p>$\begin{align}HOTA &amp;= \int_{0 &lt; \alpha \leq 1} HOTA_\alpha \
-&amp;= \frac{1}{19} \sum_{0.05}^{0.95}HOTA_\alpha\end{align}$</p>
-<p>请注意，之前，DetA和AssA都是使用基于某个Loc-IoU阈值（$\alpha$）的匈牙利匹配定义的。由于DetA和AssA得分都依赖于Loc-IoU值，我们在不同的α阈值范围内计算这些得分。对于每个阈值，我们计算检测得分和关联得分的几何平均值作为最终得分。然后通过在不同的α阈值上积分，我们将定位准确性纳入最终得分。</p>
+></p>
+<p>可以看到弱引用对象在引用队列中！</p>
+<p>那就可以合理猜测LeakCanary在干什么了，它抢先在<code>Application.onCreate()</code>方法启动之前，然后对每个Activity的onDestoryed()方法注册回调，当一个Activity要被摧毁时，就创建一个对它的弱引用，同时关联一个引用队列。</p>
+<p>那么我每间隔几秒就看一下我这个引用队列里有没有东西（如果这个对象成功释放，那么这个弱引用会进入引用队列）</p>
+<p>有东西，就说明这个Activity被成功释放，那可以不管它了；没有东西，那问题就严重了，那说么这个Activity <strong>可能存在内存泄漏</strong> 那我就要重点关注它了，把它移交到一个新的因素有严查队列中（监管级别更高的队列），每隔一段时间再检查，如果严查队列还没有东西，那我就认为发生了内存泄漏！</p>
+<p>原理大致是这么个原理，我源码还没看，等我看完继续更新。。</p>
+<blockquote>
+<h2 id="common-causes-for-memory-leaks">Common causes for memory leaks
+</h2><p>Most memory leaks are caused by bugs related to the lifecycle of objects. Here are a few common Android mistakes:</p></blockquote>
+<blockquote>
+<ul>
+<li>Adding a <code>Fragment</code> instance to the backstack without clearing that Fragment&rsquo;s view fields in <code>Fragment.onDestroyView()</code> (more details in <a class="link" href="https://stackoverflow.com/a/59504797/703646"  target="_blank" rel="noopener"
+    >this StackOverflow answer</a>).</li>
+<li>Storing an <code>Activity</code> instance as a <code>Context</code> field in an object that survives activity recreation due to configuration changes.</li>
+<li>Registering a listener, broadcast receiver or RxJava subscription which references an object with lifecycle, and forgetting to unregister when the lifecycle reaches its end.</li>
+</ul></blockquote>
 
 </section>
 
 
     <footer class="article-footer">
     
-    <section class="article-tags">
-        
-            <a href="/tags/metrics/">Metrics</a>
-        
-    </section>
-
 
     
     <section class="article-copyright">
